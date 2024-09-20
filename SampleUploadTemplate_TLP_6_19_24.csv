@@ -1,0 +1,2 @@
+﻿SampleName,Concentration (ng/ul),Total Amount (ng),Sample Volume (ul),Min Reads Required for Sample,Target Reads Required for Sample,Library Prep  (Yes/No),"Barcode i7 (""standard"")",Barcode i5 (Dual index),Bioanalyzer Required (Yes/No),Sample Description,"Volume (uL), Optional",Target Reads Required for Sample (in Millions),Pool Name,"Concentration (ng/uL), Optional"
+POMA,100,2000,200,"2,000,000,000","2,000,000,000",No,NA,NA,Yes,"GBS library, POMA",,,POMA,
