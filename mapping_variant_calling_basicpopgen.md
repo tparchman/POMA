@@ -51,12 +51,12 @@ See [Nielsen et al. 2011](./papers/Nielsen_etal_2011.pdf) and [Buerkle and Gompe
 13. Appendices
     1. Appendix 1: Useful Commands
 
-## Focal Species: *Krascheninnikovia lanata*
+## Focal Species: *Polites mardon*
 
 <img src="images/KRLAplant.jpg" alt="A Krascheninnikovia lanata plant" width="400">
 <img src="images/KRLAmap.png" alt="Map of sampling locations" width="400">
 
-*Krascheninnikovia lanata* (winterfat) is a perennial shrub with a broad north/south distributional range spanning western Canada, U.S. and Mexico. The species is exclusive to North America and its current range is likely the result of southward expansion following two distinct migration events from eastern Mongolian lineages ~ 1.8 - 0.5 Mya.
+*Polites mardon* (winterfat) is a perennial shrub with a broad north/south distributional range spanning western Canada, U.S. and Mexico. The species is exclusive to North America and its current range is likely the result of southward expansion following two distinct migration events from eastern Mongolian lineages ~ 1.8 - 0.5 Mya.
 
 The species is a halophyte (salt-tolerant) and is one of the only species outside of the *Atriplex* complex to co-dominate the salt desert shrublands of the Great Basin. It is a highly nutritious source of forage which is notable given that it is prone to replacement by the toxic exotic *Halogeton glomeratus* within disturbed habitats. The common name 'winterfat' is indicative of the persistence of green leaves throughout the winter season and late fall phenology.
 
