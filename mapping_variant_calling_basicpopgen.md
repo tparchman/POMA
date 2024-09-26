@@ -522,22 +522,24 @@ We should explain the steps that are happening here particularly any settings us
    mkdir vcf
    ```
 
-2. Make list of bam files from
+2. Make list of bam files from, do this in the `bwa/` directory
 
 ```sh
-find /bwa/ -type f -name *.sorted.bam > bam_list.txt
+ls *.sorted.bam > bam_list.txt
 ```
 
 ### Pileup, call, and filter
 
-1. We will use `bcftools 1.9` and run the following:
+1. Lets do this in the `bwa/` directory, should now have all of the .bam and .bam.bai files as well as a copy of the reference genome (`GCA_905404245.1_ilHesComm1.1_alternate_haplotype_genomic.fna`, and associated index files `hcomma*`). We will use `bcftools 1.9` and run the following:
    ```sh
    module load bcftools/1.9
    ```
 
    ```sh
-   bcftools mpileup -a DP,AD,INFO/AD -C 50 -d 250 -f GCA_905404245.1_ilHesComm1.1_alternate_haplotype_genomic.fna -q 30 -Q 20 -I -b bam_list.txt -o POMA.bcf
+   nohup bcftools mpileup -a DP,AD,INFO/AD -C 50 -d 250 -f GCA_905404245.1_ilHesComm1.1_alternate_haplotype_genomic.fna -q 30 -Q 20 -I -b bam_list.txt -o POMA.bcf 2> /dev/null &
    ```
+
+# TLP stopped here, talk to Seth.
 
    ```sh
    bcftools call -v -m -f GQ POMA.bcf -O z -o POMA.vcf.gz
