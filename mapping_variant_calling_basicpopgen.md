@@ -525,7 +525,7 @@ We should explain the steps that are happening here particularly any settings us
 2. Make list of bam files from, do this in the `bwa/` directory
 
 ```sh
-ls *.sorted.bam > bam_list.txt
+ls *.sorted.bam | sed 's/\*//' > bam_list.txt
 ```
 
 ### Pileup, call, and filter
@@ -539,31 +539,9 @@ ls *.sorted.bam > bam_list.txt
    nohup bcftools mpileup -a DP,AD,INFO/AD -C 50 -d 250 -f GCA_905404245.1_ilHesComm1.1_alternate_haplotype_genomic.fna -q 30 -Q 20 -I -b bam_list.txt -o POMA.bcf 2> /dev/null &
    ```
 
-# TLP stopped here, talk to Seth.
 
    ```sh
    bcftools call -v -m -f GQ POMA.bcf -O z -o POMA.vcf.gz
-   ```
-
-   ```sh
-   module load vcftools/0.1.14
-   ```
-
-   ```sh
-   vcftools \
-   --remove-indels \
-   --min-alleles 2 \
-   --max-alleles 2 \
-   --thin 100 \
-   --remove-filtered-all \
-   --recode \
-   --recode-INFO-all \
-   --gzvcf KRLA.vcf.gz \
-   --out 
-   ```
-
-   ```sh
-   awk '$5 > 0.5 {print $1}' KRLA.imiss | tail -n +2 > indmiss50.txt
    ```
 
 ### Understanding bcftools parameters
@@ -578,26 +556,53 @@ ls *.sorted.bam > bam_list.txt
 * -O --output-type TYPE  'b' compressed BCF; 'u' uncompressed BCF; 'z' compressed VCF; 'v' uncompressed VCF [v]
 * -o --output FILE       write output to FILE [standard output]
 
-## Convert bcf file to vcf file
+# TLP stopped here, talk to Seth.
+## Preview vcf to be sure that things are looking good in terms of expected number of variants in the raw .vcf. 
 
-### Identify SNPs
-
-1. Load Modules and Convert
-
-   ```sh
-   module load bcftools/1.9
-   bcftools call -v -c -f GQ -p 0.01 -P 0.001 -O v -o tpod.vcf tpod.bcf
-   ```
-
-2. Check number of SNPs
+Once the unfiltered vcf looks good, move to variant_filtering
 
    ```sh
    module load vcftools/0.1.14
-   vcftools --vcf tpod.vcf 
    ```
 
-   * After filtering, kept 598 out of 598 Individuals
-   * After filtering, kept 127722 out of a possible 127722 Sites
+Using vcftools to do the bare minimum filtering, which entails removing any indels, removing loci with more than 2 alleles, thinning by 100 (because our sampled genomic regions are 100 bases in length)
+
+   ```sh
+   vcftools \
+   --remove-indels \
+   --min-alleles 2 \
+   --max-alleles 2 \
+   --thin 100 \
+   --remove-filtered-all \
+   --recode \
+   --recode-INFO-all \
+   --gzvcf POMA.vcf.gz \
+   --out 
+   ```
+
+```sh
+vcftools --gzvcf POMA.vcf.gz --out POMA.vcf.gz --missing-indv
+
+```
+
+Below we are making a list of individuals that have too much missing data to move forward with. Here we taking individuals that have data at 50% or more of loci.
+
+```sh
+   awk '$5 > 0.5 {print $1}' POMA.imiss | tail -n +2 > indmiss50.txt
+```
+
+Running vcftools to make a vcf that contains only the individuals specified in indmiss50.txt made above. First step is making the list of individuals with TOO MUCH missing data.
+
+```sh
+   awk '$5 > 0.5 {print $1}' POMA.imiss | tail -n +2 > indmiss50.txt
+```
+
+Filter the full vcf using the `--exclude` argument and the indmiss50.txt file made above.
+
+```sh
+vcftools --gzvcf POMA.vcf.gz --exclude indmiss50.txt --maf 0.04 --max-meanDP 100 --min-meanDP 2 --minQ 20 --missing .7 --recode --recode-INFO-all --remove-filter-all --out POMA.04.maxdp100.mindp2.miss70.vcf
+```
+
 
 ### Understanding vcftools Parameters
 
