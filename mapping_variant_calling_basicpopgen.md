@@ -1,4 +1,4 @@
-# GBS data processing for POMA.
+ls# GBS data processing for POMA.
 
 This document presents our workflow and rationale for genotype inference from high throughput sequencing of reduced representation libraries (GBS, RADseq, ddRADseq, etc). Several canned software packages or computational workflows exist for handling this type of data. These methods rely on set thresholds for sequencing coverage depth per locus to call hard genotypes. The biggest cost of using these methods is throwing away much, if not most, of the data. Examples of such software/workflows include:
 
@@ -245,7 +245,7 @@ Denovo assemblies uses your reads to generate a consensus artificial reference t
 
 There are many tools available for denovo assembly. We will be using [CD-HIT](https://www.bioinformatics.org/cd-hit/) in a workflow from [dDocent](http://www.ddocent.com/) (Puritz et al. 2014). See [LaCava et al. 2020](https://onlinelibrary.wiley.com/doi/10.1111/1755-0998.13108) for a comparison of tools.
 
-This workflow begins with the gziped .fastq files in KRLA/fastq.
+This workflow begins with the gziped .fastq files in /working/parchman/POMAls/fastq.
 
 ### Prepare directories and files
 
@@ -270,7 +270,7 @@ This workflow begins with the gziped .fastq files in KRLA/fastq.
    ls *.fastq.gz -1 | wc -l
    ```
 
-   * **Number of KRLA individuals:** 497
+   * **Number of POMA individuals:** 93
 
 ### Generate unique sequence sets
 
@@ -317,7 +317,7 @@ There is no reason to use 100 identical sequences for the denovo clustering task
       * The combination of commands takes the sequence lines from the .fastq.gz file, counts how many times they occur, and produced a count-sequence file that is saved in a file with the individual ID (stored in {}) with the .uniq.seqs ending
    * The command uses `nohup` and `&> /dev/null &` as described above
 
-3. Check that you have a uniq.seq file for each fastq.gz file:
+3. Check that you have a *uniq.seq file for each fastq.gz file:
 
    ```sh
    ls *.uniq.seqs -1 | wc -l
@@ -334,7 +334,7 @@ There is no reason to use 100 identical sequences for the denovo clustering task
 
    ```sh
    cp /working/romero/scripts/selectContigs.sh ../scripts
-   nohup bash ../scripts/selectContigs.sh 4 2 > k4.i2.seqs &
+   nohup bash ../scripts/selectContigs.sh 3 2 > k3.i2.seqs &
    ```
 
    * Run this in select_seqs
@@ -377,7 +377,7 @@ There is no reason to use 100 identical sequences for the denovo clustering task
       * 0.95 is usually a good clustering similarity to use, but you should take into account how diverged the populations or species you are studying are
       * Higher values of c create more contigs and runs faster
       * Lower values of c create fewer contigs and runs slower
-
+# TLP to here
 4. Use [bwa index](https://bio-bwa.sourceforge.net/bwa.shtml) to index our assembly into fasta format for mapping individual reads
 
    ```sh
