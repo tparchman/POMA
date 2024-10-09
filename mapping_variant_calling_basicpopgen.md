@@ -377,12 +377,12 @@ There is no reason to use 100 identical sequences for the denovo clustering task
       * 0.95 is usually a good clustering similarity to use, but you should take into account how diverged the populations or species you are studying are
       * Higher values of c create more contigs and runs faster
       * Lower values of c create fewer contigs and runs slower
-# TLP to here
+
 4. Use [bwa index](https://bio-bwa.sourceforge.net/bwa.shtml) to index our assembly into fasta format for mapping individual reads
 
    ```sh
    module load bwa/0.7.17-r1188
-   bwa index -p K_lanata rf.4.6.94
+   bwa index -p POMA_ref rf.3.2.95
    ```
 
    * `-p` lets us set the prefix name that will be attached to all output assembly files. Use something descriptive of the species you are working on.
@@ -480,7 +480,7 @@ for file in ../fastq/*.gz
    then
       fPrefix=$(echo "$file" | sed 's|.*/||' | cut -f1 -d ".")
       echo mapping and sorting individual "$ctr" of "$fTotal"
-      bwa mem -t 24 hcomma "$file" | \
+      bwa mem -t 24 POMA_ref "$file" | \
       samtools view -u -b - | \
       samtools sort -l0 -@24 -o "$fPrefix.sorted.bam"
       ((ctr++))
