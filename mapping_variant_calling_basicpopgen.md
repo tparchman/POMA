@@ -509,7 +509,6 @@ We should explain the steps that are happening here particularly any settings us
 * `samtools index` - indexes the .bam file for faster search, creating .bai files
   * `-@` - number of threads used (@24 = 24 threads)
 
-# TLP: Done to here
 
 ## Build pileup and variant call with BCFTools
 
@@ -536,13 +535,15 @@ ls *.sorted.bam | sed 's/\*//' > bam_list.txt
    ```
 
    ```sh
-   nohup bcftools mpileup -a DP,AD,INFO/AD -C 50 -d 250 -f GCA_905404245.1_ilHesComm1.1_alternate_haplotype_genomic.fna -q 30 -Q 20 -I -b bam_list.txt -o POMA.bcf 2> /dev/null &
+   nohup bcftools mpileup -a DP,AD,INFO/AD -C 50 -d 250 -f rf.3.2.95 -q 30 -Q 20 -I -b bam_list.txt -o POMAdenovo.bcf 2> /dev/null &
    ```
-
-
+## TLP 10.13.24 marker here
    ```sh
-   bcftools call -v -m -f GQ POMA.bcf -O z -o POMA.vcf.gz
+   bcftools call -v -m -f GQ POMAdenovo.bcf -O z -o POMAdenovo.vcf.gz
    ```
+
+## TLP 10.13.24 marker here
+
 
 ### Understanding bcftools parameters
 
