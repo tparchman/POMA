@@ -94,7 +94,6 @@ writeLDAfile(pca_df, 4)
 writeLDAfile(pca_df, 5)
 writeLDAfile(pca_df, 6)
 writeLDAfile(pca_df, 7)
-writeLDAfile(pca_df, 8)
 ```
 
 Create header for `.mpgl` file
