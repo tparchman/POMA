@@ -1,0 +1,24 @@
+
+VCFtools - 0.1.14
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--gzvcf POMAdenovo.vcf.gz
+	--exclude q30indmiss70.txt
+	--recode-INFO-all
+	--maf 0.02
+	--max-alleles 2
+	--min-alleles 2
+	--thin 100
+	--minQ 30
+	--max-missing 0.9
+	--out POMA.bithin.q30.i70.maf02.a90
+	--recode
+	--remove-indels
+
+Using zlib version: 1.2.7
+Excluding individuals in 'exclude' list
+After filtering, kept 89 out of 93 Individuals
+Outputting VCF file...
+After filtering, kept 33801 out of a possible 559190 Sites
+Run Time = 26.00 seconds
