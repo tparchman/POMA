@@ -1,0 +1,382 @@
+---
+title:  |
+  | **POMA**
+  | <span style='font-size: 18pt'>*Exploration via filtering and PCA*</span>
+output: 
+  html_document:
+    theme: flatly
+    highlight: tango
+---
+
+
+```{r, echo=FALSE}
+library(knitr)
+opts_chunk$set(echo = F, message = F, warning = F, fig.width = 10, fig.height = 4.5, fig.align = 'center')
+```
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(lubridate)
+library(stringr)
+library(ggplot2)
+library(ggrepel)
+library(ggmap)
+library(patchwork)
+library(devtools)
+library(RColorBrewer)
+library(MetBrewer)
+library(rgbif)
+library(readr)
+library(data.table)
+library(ggsci)
+library(ggpubr)
+library(patchwork)
+library(vegan)
+library(ggcorrplot)
+library(umap)
+library(hierfstat)
+
+setwd("~/Documents/GitHub/POMA/denovo/")
+```
+
+```{r, fig.width=10, fig.height=12}
+var_freq <- read_delim("POMA.bithin.frq", delim = "\t",
+                       col_names = c("chr", "pos", "nalleles", "nchr", "a1", "a2"), skip = 1)
+
+var_freq$maf <- var_freq %>% dplyr::select(a1, a2) %>% apply(1, function(z) min(z))
+
+mafFig <- ggplot(var_freq, aes(maf)) +
+  geom_density(fill = "dodgerblue1", colour = "black", alpha = 0.3) +
+  theme_light() +
+  ggtitle('Minor Allele Frequency') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+var_qual <- read_delim("POMA.bithin.lqual", delim = "\t",
+           col_names = c("chr", "pos", "qual"), skip = 1)
+
+vqualFig <- ggplot(var_qual, aes(qual)) +
+  geom_density(fill = "dodgerblue1", colour = "black", alpha = 0.3) +
+  theme_light() +
+  ggtitle('Variant Quality') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+var_depth <- read_delim("filtering/POMA.bithin.q30.iAll.ldepth.mean", delim = "\t",
+           col_names = c("chr", "pos", "mean_depth", "var_depth"), skip = 1)
+
+vdepthFig <- ggplot(var_depth, aes(mean_depth)) +
+  geom_density(fill = "dodgerblue1", colour = "black", alpha = 0.3) +
+  theme_light() + xlim(0, 30) +
+  ggtitle('Variant Depth (cutoff above 30)') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+var_miss <- read_delim("POMA.bithin.lmiss", delim = "\t",
+                       col_names = c("chr", "pos", "nchr", "nfiltered", "nmiss", "fmiss"), skip = 1) %>%
+  mutate(indW = (186 - nmiss) / 2)
+
+vmissFig <- ggplot(var_miss, aes(fmiss)) +
+  geom_density(fill = "dodgerblue1", colour = "black", alpha = 0.3) +
+  theme_light() +
+  ggtitle('Variant Missingness') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+test <- matrix(nrow = 93, ncol = 2)
+test[,1] <- seq(1, 93, 1)
+for(i in 1:nrow(test)){
+  test[i,2] <- as.integer(nrow(filter(var_miss, indW >= i)))
+}
+ind_with <- as.data.frame(test)
+
+indWFig <- ggplot(ind_with, aes(x = V1, y = V2)) +
+  geom_line(linewidth = 1) +
+  scale_x_continuous(breaks = seq(0, 95, 5)) +
+  scale_y_continuous(breaks = seq(0, 300000, 20000)) +
+  labs(x = 'Indiv. w/ Data',
+       y = 'Total Loci') +
+  ggtitle('Loci Retention Rate') +
+  theme_light() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+POMA1 <- mafFig + vqualFig + vdepthFig + 
+  vmissFig + indWFig +
+  plot_layout(ncol = 2)
+
+summary(var_depth$mean_depth)
+POMA1
+
+# ggsave('POMAfiltering1.png', POMA1, height = 12, width = 10, dpi = 400)
+```
+
+```{r, fig.width=7, fig.height=7}
+ind_depth <- read_delim("filtering/POMA.bithin.q30.iAll.idepth", delim = "\t",
+                        col_names = c("ind", "nsites", "depth"), skip = 1)
+
+idepthFig <- ggplot(ind_depth, aes(depth)) + 
+  geom_histogram(fill = "dodgerblue1", colour = "black", alpha = 0.3) +
+  theme_light() +
+  ggtitle('Indiv. Depth (N=93)') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+ind_miss  <- read_delim("filtering/POMA.bithin.q30.iAll.imiss", delim = "\t",
+                        col_names = c("ind", "ndata", "nfiltered", "nmiss", "fmiss"), skip = 1) %>%
+  mutate(Pop = str_split_i(ind, '_', 2),
+         PopInd = paste(Pop, str_split_i(str_split_i(ind, '\\.', 1), '_', 3), sep = '_'))
+
+# imissFig <- ggplot(ind_miss, aes(fmiss)) +
+#   geom_histogram(fill = "dodgerblue1", colour = "black", alpha = 0.3) +
+#   theme_light() +
+#   ggtitle('Indiv. Missingness (N=93)') +
+#   theme(plot.title = element_text(hjust = 0.5))
+
+imissFig <- ggplot(ind_miss, aes(x = fmiss, y = Pop, label = PopInd, fill = Pop, color = Pop)) +
+  geom_jitter(pch = 21, size = 4,
+              position = position_jitter(height = 0.1)) +
+  # geom_label_repel(size = 4) +
+  scale_color_manual(values = col7_d3) +
+  scale_fill_manual(values = col7) +
+  theme_bw()
+
+imissFig
+
+POMA2 <- imissFig + idepthFig + plot_layout(ncol = 1)
+POMA2
+
+# ggsave('POMAfiltering2.png', POMA2, height = 7, width = 7, dpi = 400)
+```
+
+These two metrics are strongly correlated, so I only filter on 'missingness' in the following PCAs.
+
+```{r, fig.width=8, fig.height=4}
+ind_comb <- full_join(ind_miss, ind_depth, by = 'ind')
+
+missDepCorr <- ggplot(ind_comb, aes(x = fmiss, y = depth, color = Pop, fill = Pop)) +
+  geom_point(pch = 21, size = 3) +
+  scale_color_manual(values = col7_d3) +
+  scale_fill_manual(values = col7) +
+  theme_bw() +
+  theme(legend.position = 'none')
+
+POMA3 <- imissFig + missDepCorr
+
+POMA3
+
+ggsave('POMA_indDpthMiss.png', POMA3, height = 5, width = 12, dpi = 400)
+```
+
+```{r, fig.width=20, fig.height=20}
+var_freq <- read_delim("./filtering/POMA.bithin.q30.i60.frq", delim = "\t",
+                       col_names = c("chr", "pos", "nalleles", "nchr", "a1", "a2"), skip = 1)
+
+var_freq$maf <- var_freq %>% dplyr::select(a1, a2) %>% apply(1, function(z) min(z))
+var_freq <- mutate(var_freq, fmiss = (158-nchr)/158)
+
+test <- matrix(nrow = 50, ncol = 20)
+test[,1] <- seq(0.01, 0.50, 0.01)
+test2 <- seq(95, 5, -5)
+for(i in 1:nrow(test)){
+  for(j in 1:length(test2)){
+  # test[i,2] <- as.integer(nrow(filter(var_freq, maf >= (i/100))))
+    test[i,(j+1)] <- as.integer(nrow(filter(var_freq, maf >= (i/100) & fmiss <= (test2[j]/100))))
+  }
+}
+ind_with <- as.data.frame(test)
+
+fNames <- vector()
+for(i in 1:length(test2)){
+  fNames[i] = paste('fmiss', as.character(test2[i]), sep = '_')
+}
+colnames(ind_with)[2:20] <- fNames
+
+comb <- ind_with %>%
+  pivot_longer(cols = 2:20, names_to = 'fmiss', values_to = 'snps')
+
+# mafFig <- ggplot(var_freq, aes(maf)) +
+#   geom_density(fill = "dodgerblue1", colour = "black", alpha = 0.3) +
+#   theme_light() +
+#   ggtitle('Minor Allele Frequency') +
+#   theme(plot.title = element_text(hjust = 0.5))
+
+mafRet60 <- ggplot(comb, aes(x = V1, y = snps, group = fmiss, label = fmiss, color = fmiss)) +
+  geom_line(linewidth = 1) +
+  scale_x_continuous(breaks = seq(0, 0.5, 0.05)) +
+  scale_y_continuous(breaks = seq(0, 230000, 5000)) +
+  coord_cartesian(xlim = c(0, 0.2),
+                  ylim = c(0, 60000)) +
+  geom_label_repel(size = ifelse(comb$V1 == 0.01, 5, 0),
+                   alpha = ifelse(comb$V1 == 0.01, 1, 0),
+                   color = 'black',
+                   max.overlaps = 40) +
+  scale_color_moma_d(palette_name = 'Warhol') +
+  labs(x = 'MAF',
+       y = 'Total Loci') +
+  ggtitle('Loci Retention Rate') +
+  theme_light() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+Rets <- mafRetAll + mafRet70 + mafRet68 + mafRet60 + plot_layout(ncol = 2)
+
+Rets
+```
+
+```{r, fig.width=16, fig.height=5}
+pcaDF <- function(file012, popID){
+  df012 = fread(file012, sep = '\t', data.table = F)[,-1] %>%
+    as.matrix()
+  colmean = apply(df012, 2, mean, na.rm=TRUE)
+  normalize = matrix(nrow = nrow(df012), ncol = ncol(df012))
+  af = colmean/2
+  for (m in 1:length(af)){
+    nr = df012[ ,m]-colmean[m]
+    dn = sqrt(af[m]*(1-af[m]))
+    normalize[ ,m] = nr/dn
+  }
+  pca012 = prcomp(normalize, scale. = FALSE, center = FALSE)
+  pca012_loading = pca012$x
+  pca_df = pca012_loading[,1:6]
+  pca_df = cbind(popID, pca_df)
+  return(pca_df)
+}
+
+# pcaPoma <- pcaDF('POMA.maf05.q30.a60.i70.recode.vcf.012', read.csv('POMA.maf05.q30.a60.i70.recode.vcf.012.indv'))
+# 
+# df012 = fread('POMA.maf05.q30.a60.i70.recode.vcf.012', sep = '\t', data.table = F)[,-1] %>%
+#   as.matrix()
+
+makePopId <- function(fileIndv){
+  PopIDdf = read.table(fileIndv, sep="\t") %>%
+    as.data.frame() %>%
+    rename(All = V1) %>%
+    mutate(Population = str_split_i(All, '_', 2),
+           ID = str_split_i(All, '_', 3))
+  return(PopIDdf)
+}
+
+col7 <- c("#24C2CC","#309500","#7a2ba4",
+          "#F2E02F","#ffb040","#1E4E87","#F45812")
+col7_d3 <- darken(col7, amount = 0.3)
+
+pca1234FUN <- function(file012, popID, colorSet, grouping){
+  df012 = fread(file012, sep = '\t', data.table = F)[,-1] %>%
+    as.matrix() %>%
+    apply(2, function(d) gsub(-1, NA, d, fixed=TRUE)) %>%
+    apply(2, function(d) as.numeric(d))
+  colmean = apply(df012, 2, mean, na.rm=TRUE)
+  normalize = matrix(nrow = nrow(df012), ncol = ncol(df012))
+  af = colmean/2
+  for (m in 1:length(af)){
+    nr = df012[ ,m]-colmean[m]
+    dn = sqrt(af[m]*(1-af[m]))
+    normalize[ ,m] = nr/dn
+  }
+  normalize[is.na(normalize)] = 0
+  pca012 = prcomp(normalize, scale. = FALSE, center = FALSE)
+  # pca012 = prcomp(df012, scale = F, center = T)
+  pca012_loading = pca012$x
+  pc1var = formatC(((summary(pca012)$importance[2,1])*100), digits = 1, format = 'f')
+  pc2var = formatC(((summary(pca012)$importance[2,2])*100), digits = 1, format = 'f')
+  pc3var = formatC(((summary(pca012)$importance[2,3])*100), digits = 1, format = 'f')
+  pc4var = formatC(((summary(pca012)$importance[2,4])*100), digits = 1, format = 'f')
+  pc5var = formatC(((summary(pca012)$importance[2,5])*100), digits = 1, format = 'f')
+  pc6var = formatC(((summary(pca012)$importance[2,6])*100), digits = 1, format = 'f')
+  pca_df = pca012_loading[,1:6]
+  pca_df = cbind(popID, pca_df)
+  pca12_pop = ggplot(data = pca_df, aes(x = PC1, y = PC2, 
+                                        fill = .data[[grouping]],
+                                        color = .data[[grouping]])) +
+    geom_point(pch = 21, color = 'black', size = 4) + 
+    xlab(paste("PC",1," (",pc1var,"%)",sep="")) +
+    ylab(paste("PC",2," (",pc2var,"%)",sep="")) +
+    scale_fill_manual(name = paste(grouping, ':', sep = ''), values = colorSet) +
+    scale_color_manual(name = paste(grouping, ':', sep = ''), values = darken(colorSet, 0.3)) +
+    theme_bw() + 
+    theme(legend.position = 'none',
+          axis.text = element_text(size = 13),
+          axis.title = element_text(size = 16, color = "black",
+                                    face = "bold", vjust = 1),
+          panel.border = element_rect(linewidth = 1.5, color = "black"),
+          legend.text = element_text(size = 11),
+          legend.title = element_text(size = 13, face = "bold"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank())
+  pca34_pop = ggplot(data = pca_df, aes(x = PC3, y = PC4,
+                                        fill = .data[[grouping]],
+                                        color = .data[[grouping]])) +
+    geom_point(pch = 21, color = 'black', size = 4) + 
+    xlab(paste("PC",3," (",pc3var,"%)",sep="")) +
+    ylab(paste("PC",4," (",pc4var,"%)",sep="")) +
+    scale_fill_manual(name = paste(grouping, ':', sep = ''), values = colorSet) +
+    scale_color_manual(name = paste(grouping, ':', sep = ''), values = darken(colorSet, 0.3)) +
+    theme_bw() + 
+    theme(legend.position = 'none',
+          axis.text = element_text(size = 13),
+          axis.title = element_text(size = 16, color = "black",
+                                    face = "bold", vjust = 1),
+          panel.border = element_rect(linewidth = 1.5, color = "black"),
+          legend.text = element_text(size = 11),
+          legend.title = element_text(size = 13, face = "bold"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank())
+  pca56_pop = ggplot(data = pca_df, aes(x = PC5, y = PC6,
+                                        fill = .data[[grouping]],
+                                        color = .data[[grouping]])) +
+    geom_point(pch = 21, color = 'black', size = 4) + 
+    xlab(paste("PC",5," (",pc5var,"%)",sep="")) +
+    ylab(paste("PC",6," (",pc6var,"%)",sep="")) +
+    scale_fill_manual(name = paste(grouping, ':', sep = ''), values = colorSet) +
+    scale_color_manual(name = paste(grouping, ':', sep = ''), values = darken(colorSet, 0.3)) +
+    theme_bw() + 
+    theme(axis.text = element_text(size = 13),
+          axis.title = element_text(size = 16, color = "black",
+                                    face = "bold", vjust = 1),
+          panel.border = element_rect(linewidth = 1.5, color = "black"),
+          legend.text = element_text(size = 11),
+          legend.title = element_text(size = 13, face = "bold"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank())
+  finalPatch = pca12_pop + pca34_pop + pca56_pop + plot_layout(ncol = 3)
+  return(finalPatch)
+}
+
+# Apop <- makePopId('filtering/matrices/POMA.bithin.q30.iAll.maf03.a90.012.indv')
+# Apca <- pca1234FUN('filtering/matrices/POMA.bithin.q30.iAll.maf03.a90.012', Apop, col7, 'Population')
+# Apca
+
+# Bpop <- makePopId('filtering/matrices/POMA.bithin.q30.i70.maf03.a90.012.indv')
+# Bpca <- pca1234FUN('filtering/matrices/POMA.bithin.q30.i70.maf03.a90.012', Bpop, col7, 'Population')
+# Bpca
+
+# Cpop <- makePopId('filtering/matrices/POMA.bithin.q30.i60.maf03.a90.012.indv')
+# Cpca <- pca1234FUN('filtering/matrices/POMA.bithin.q30.i60.maf03.a90.012', Cpop, col7, 'Population')
+# Cpca
+# 
+# Dpop <- makePopId('filtering/matrices/POMA.bithin.q30.i60.maf01.a90.012.indv')
+# Dpca <- pca1234FUN('filtering/matrices/POMA.bithin.q30.i60.maf01.a90.012', Dpop, col7, 'Population')
+# Dpca
+# 
+# Epop <- makePopId('filtering/matrices/POMA.bithin.q30.iAll.maf01.a90.012.indv')
+# Epca <- pca1234FUN('filtering/matrices/POMA.bithin.q30.iAll.maf01.a90.012', Epop, col7, 'Population')
+# Epca
+
+# Fpop <- makePopId('filtering/matrices/POMA.bithin.q30.i70.maf01.a90.012.indv')
+# Fpca <- pca1234FUN('filtering/matrices/POMA.bithin.q30.i70.maf01.a90.012', Fpop, col7, 'Population')
+# Fpca
+
+# Gpop <- makePopId('filtering/matrices/POMA.bithin.q30.i70.maf05.a90.012.indv')
+# Gpca <- pca1234FUN('filtering/matrices/POMA.bithin.q30.i70.maf05.a90.012', Gpop, col7, 'Population')
+# Gpca
+
+# Hpop <- makePopId('filtering/matrices/POMA.bithin.q30.i70.maf00.a90.012.indv')
+# Hpca <- pca1234FUN('filtering/matrices/POMA.bithin.q30.i70.maf00.a90.012', Hpop, col7, 'Population')
+# Hpca
+
+Ipop <- makePopId('filtering/matrices/POMA.bithin.q30.i70.maf02.a90.012.indv')
+Ipca <- pca1234FUN('filtering/matrices/POMA.bithin.q30.i70.maf02.a90.012', Ipop, col7, 'Population')
+
+Hpca
+Fpca
+Ipca
+Bpca
+Gpca
+
+# ggsave('POMAdenovo_PCAinitial.png', Apca, width = 16, height = 5, dpi = 400)
+```
