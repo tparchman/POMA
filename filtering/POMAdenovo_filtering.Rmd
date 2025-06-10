@@ -8,6 +8,9 @@ output:
     highlight: tango
 ---
 
+```{r, setup, include=FALSE}
+knitr::opts_knit$set(root.dir = '~/Documents/GitHub/POMA_scratch/denovo/')
+```
 
 ```{r, echo=FALSE}
 library(knitr)
@@ -37,7 +40,7 @@ library(ggcorrplot)
 library(umap)
 library(hierfstat)
 
-setwd("~/Documents/GitHub/POMA/denovo/")
+setwd("~/Documents/GitHub/POMA_scratch/denovo/")
 ```
 
 ```{r, fig.width=10, fig.height=12}
@@ -141,6 +144,9 @@ imissFig
 POMA2 <- imissFig + idepthFig + plot_layout(ncol = 1)
 POMA2
 
+idepthFig
+
+mean(ind_depth$depth)
 # ggsave('POMAfiltering2.png', POMA2, height = 7, width = 7, dpi = 400)
 ```
 
@@ -215,7 +221,7 @@ mafRet60 <- ggplot(comb, aes(x = V1, y = snps, group = fmiss, label = fmiss, col
 
 Rets <- mafRetAll + mafRet70 + mafRet68 + mafRet60 + plot_layout(ncol = 2)
 
-Rets
+mafRet60
 ```
 
 ```{r, fig.width=16, fig.height=5}
@@ -379,4 +385,45 @@ Bpca
 Gpca
 
 # ggsave('POMAdenovo_PCAinitial.png', Apca, width = 16, height = 5, dpi = 400)
+```
+
+```{r}
+g_depth  <- read_delim("../../POMA/filtering/finalPOMA.gdepth", delim = "\t", show_col_types = F)
+
+depth_sum <- g_depth %>%
+  pivot_longer(cols = 3:91, names_to = 'ind', values_to = 'reads') %>%
+  group_by(ind) %>%
+  filter(reads == 0) %>%
+  summarize(pctCov = 1-(n()/33801))
+
+test <- colMeans(g_depth[,-1:-2])
+
+test2 <- test[test < 50]
+
+hist(test2)
+
+mean(test2)
+
+hist(test)
+```
+
+```{r}
+reads <- read.csv("../../POMA/reads_report_denovo.csv") %>%
+  mutate(ID = str_split_i(str_split_i(ID, "/", 3), '\\.', 1),
+         MapRate = MapPrimReads/TotPrimReads)
+
+depth <- read_delim("../../POMA/finalPOMA.idepth", delim = '\t', show_col_types = F) %>%
+  mutate(ID = str_split_i(INDV, '\\.', 1))
+
+combined <- full_join(reads, depth, by = 'ID') %>%
+  select(-INDV, -N_SITES) %>%
+  rename(finalSNP_MeanDepth = MEAN_DEPTH)
+
+write_csv(combined, file = '../../POMA/depth_read_summary.csv', quote = 'none')
+
+dByR <- ggplot(combined, aes(x = finalSNP_MeanDepth, y = MapPrimReads)) +
+  geom_point() +
+  theme_bw()
+
+dByR
 ```
