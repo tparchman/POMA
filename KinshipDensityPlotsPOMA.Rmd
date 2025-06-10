@@ -186,7 +186,7 @@ mlePlot <- ggplot(data = mleKin, aes(x = kinship, y = Pop, fill = Pop, color = P
   coord_cartesian(ylim = c(0.75, 7.25)) +
   labs(x = 'Kinship Coefficient',
        y = 'Population',
-       title = 'MLE method') +
+       title = 'Maximum Likelihood Estimation') +
   theme_bw() +
   theme(legend.position = 'none',
         panel.grid = element_blank(),
@@ -247,7 +247,7 @@ momPlot <- ggplot(data = momKin, aes(x = kinship, y = Pop, fill = Pop, color = P
   coord_cartesian(ylim = c(0.75, 7.25)) +
   labs(x = 'Kinship Coefficient',
        y = 'Population',
-       title = 'MoM method') +
+       title = 'Method of Moments') +
   theme_bw() +
   theme(legend.position = 'none',
         panel.grid = element_blank(),
