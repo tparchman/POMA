@@ -132,8 +132,8 @@ col7_d3 <- darken(col7, amount = 0.3)
 ```{r, fig.height=6, fig.width=12}
 mlePlot <- ggplot(data = mleKin, aes(x = kinship, y = Pop, fill = Pop, color = Pop)) +
   geom_vline(xintercept = 0, color = 'black') +
-  geom_vline(xintercept = 0.5, color = 'grey25', linetype = 'dashed') +
   geom_vline(xintercept = 0.25, color = 'grey25', linetype = 'dashed') +
+  geom_vline(xintercept = 0.125, color = 'grey25', linetype = 'dashed') +
   geom_ridgeline(aes(height = after_stat(scaled)),
                  scale = 0.8,
                  stat = 'density',
@@ -141,36 +141,48 @@ mlePlot <- ggplot(data = mleKin, aes(x = kinship, y = Pop, fill = Pop, color = P
                  trim = T) +
   geom_jitter(pch = 21, size = 2.5,
               aes(height = NULL),
-              position = position_jitter(width = 0.01, height = 0.1),
+              position = position_jitter(width = 0.005, height = 0.15),
               color = 'black',
               stroke = 0.25, alpha = 0.8) +
   annotate('text',
-           x = 0.27,
-           y = 1.9,
-           label = substitute(paste(italic('FULL SIB / FULL SIB'))),
+           x = 0.135,
+           y = 6.7,
+           label = substitute(paste(italic('UNCLE / NIECE'))),
            angle = 270,
-           size = 4.5) +
+           size = 4) +
   annotate('text',
-           x = 0.27,
-           y = 6,
+           x = 0.135,
+           y = 1.1,
+           label = substitute(paste(italic('HALF SIBS'))),
+           angle = 270,
+           size = 4) +
+  annotate('text',
+           x = 0.26,
+           y = 6.2,
            label = substitute(paste(italic('PARENT / OFFSPRING'))),
            angle = 270,
-           size = 4.5) +
+           size = 4) +
   annotate('text',
-           x = 0.52,
-           y = 4,
-           label = substitute(paste(italic('INDIVIDUAL / SELF'))),
+           x = 0.26,
+           y = 1.1,
+           label = substitute(paste(italic('FULL SIBS'))),
            angle = 270,
-           size = 4.5) +
-  annotate('text',
-           x = 0.395,
-           y = 6.9,
-           label = substitute(paste(bold('N (pairwise) = 555'))),
-           size = 4.5) +
+           size = 4) +
+  # annotate('text',
+  #          x = 0.52,
+  #          y = 4,
+  #          label = substitute(paste(italic('INDIVIDUAL / SELF'))),
+  #          angle = 270,
+  #          size = 4.5) +
+  # annotate('text',
+  #          x = 0.185,
+  #          y = 6.9,
+  #          label = substitute(paste(bold('N (pairwise) = 555'))),
+  #          size = 4) +
   scale_fill_manual(values = col7) +
   scale_color_manual(values = col7_d3) +
-  scale_x_continuous(limit = c(-0.02, 0.54), 
-                     breaks = c(0, 0.25, 0.5)) +
+  scale_x_continuous(limit = c(-0.01, 0.265), 
+                     breaks = c(0, 0.125, 0.25)) +
   coord_cartesian(ylim = c(0.75, 7.25)) +
   labs(x = 'Kinship Coefficient',
        y = 'Population',
@@ -187,8 +199,8 @@ mlePlot <- ggplot(data = mleKin, aes(x = kinship, y = Pop, fill = Pop, color = P
 
 momPlot <- ggplot(data = momKin, aes(x = kinship, y = Pop, fill = Pop, color = Pop)) +
   geom_vline(xintercept = 0, color = 'black') +
-  geom_vline(xintercept = 0.5, color = 'grey25', linetype = 'dashed') +
   geom_vline(xintercept = 0.25, color = 'grey25', linetype = 'dashed') +
+  geom_vline(xintercept = 0.125, color = 'grey25', linetype = 'dashed') +
   geom_ridgeline(aes(height = after_stat(scaled)),
                  scale = 0.8,
                  stat = 'density',
@@ -196,27 +208,33 @@ momPlot <- ggplot(data = momKin, aes(x = kinship, y = Pop, fill = Pop, color = P
                  trim = T) +
   geom_jitter(pch = 21, size = 2.5,
               aes(height = NULL),
-              position = position_jitter(width = 0.01, height = 0.1),
+              position = position_jitter(width = 0.005, height = 0.15),
               color = 'black',
               stroke = 0.25, alpha = 0.8) +
   annotate('text',
-           x = 0.27,
-           y = 1.9,
-           label = substitute(paste(italic('FULL SIB / FULL SIB'))),
+           x = 0.135,
+           y = 6.7,
+           label = substitute(paste(italic('UNCLE / NIECE'))),
            angle = 270,
-           size = 4.5) +
+           size = 4) +
   annotate('text',
-           x = 0.27,
-           y = 6,
+           x = 0.135,
+           y = 1.1,
+           label = substitute(paste(italic('HALF SIBS'))),
+           angle = 270,
+           size = 4) +
+  annotate('text',
+           x = 0.26,
+           y = 6.2,
            label = substitute(paste(italic('PARENT / OFFSPRING'))),
            angle = 270,
-           size = 4.5) +
+           size = 4) +
   annotate('text',
-           x = 0.52,
-           y = 4,
-           label = substitute(paste(italic('INDIVIDUAL / SELF'))),
+           x = 0.26,
+           y = 1.1,
+           label = substitute(paste(italic('FULL SIBS'))),
            angle = 270,
-           size = 4.5) +
+           size = 4) +
   # annotate('text',
   #          x = 0.39,
   #          y = 6.9,
@@ -224,8 +242,8 @@ momPlot <- ggplot(data = momKin, aes(x = kinship, y = Pop, fill = Pop, color = P
   #          size = 4) +
   scale_fill_manual(values = col7) +
   scale_color_manual(values = col7_d3) +
-  scale_x_continuous(limit = c(-0.02, 0.54), 
-                     breaks = c(0, 0.25, 0.5)) +
+  scale_x_continuous(limit = c(-0.01, 0.265), 
+                     breaks = c(0, 0.125, 0.25)) +
   coord_cartesian(ylim = c(0.75, 7.25)) +
   labs(x = 'Kinship Coefficient',
        y = 'Population',
