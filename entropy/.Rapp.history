@@ -1,0 +1,7 @@
+ls()
+setwd("~/Documents/GitHub/POMA/entropy")
+dat <- read.csv("gprob2.txt") #genotype matrix for k=2
+head(dat[,c(1:6)])
+gmatrix <- dat[,c(2:33798)] #to put into the He calculation
+R.string.version
+R.version
