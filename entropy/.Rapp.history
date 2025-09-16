@@ -1,7 +1,220 @@
-ls()
+R.version()
+R.version
+uninstall.R(4.5.1, GUI = TRUE)
+uninstall.R("4.5.1", GUI = TRUE)
+install.packages("installr")
+library("installr")
+uninstall.R("4.5.1", GUI = TRUE)
+R.home
+R.home()
+install.packages("bigR")
+install.packages("bigR")
+install.packages("BIGr")
+install.packages(c('Rsamtools', 'Biostrings', 'pwalign'))
+??installr::uninstall.R()
 setwd("~/Documents/GitHub/POMA/entropy")
 dat <- read.csv("gprob2.txt") #genotype matrix for k=2
 head(dat[,c(1:6)])
+dim(dat)
 gmatrix <- dat[,c(2:33798)] #to put into the He calculation
-R.string.version
-R.version
+popID <- read.csv("POMA_PopID.csv")
+dat.pop <- cbind(popID,dat)
+head(dat.pop[,c(1:12)])
+calc_he <- function(input_matrix=NA){
+calc_he <- function(input_matrix=NA){#
+  he_vect <- vector(length=dim(input_matrix)[2])#
+  for (i in 1:dim(input_matrix)[2]){#
+    afreq <- mean(input_matrix[,i]) / 2		## calculate the locus allele frequency#
+    he_vect[i] <- 2 * afreq * (1-afreq)		## calculate expected heterozygosity from the allele frequency#
+  }
+hist dat.pop$locus2
+hist(dat.pop$locus2)
+input_matrix)[2]
+input_matrix[2]
+max(dat.pop$locus2)
+max(dat.pop$locus3)
+max(dat.pop)
+max(dat.pop[c(2:33798),])
+calc_he <- function(geno_matrix) {#
+  expected_heterozygosity <- apply(geno_matrix, 2, function(locus) {#
+    # Calculate allele frequencies#
+    p <- sum(locus == 0) / length(locus)  # Frequency of allele 0#
+    q <- sum(locus == 2) / length(locus)  # Frequency of allele 2#
+    # Expected heterozygosity: He = 2pq#
+    he <- 2 * p * q#
+    return(he)#
+  })#
+  return(expected_heterozygosity)
+observed_heterozygosity <- calc_ho(gmatrix)
+calc_ho <- function(geno_matrix) {#
+  observed_heterozygosity <- apply(geno_matrix, 2, function(locus) {#
+    # Number of heterozygotes at the locus#
+    num_heterozygotes <- sum(locus == 1)#
+    # Proportion of heterozygotes (Ho)#
+    ho <- num_heterozygotes / length(locus)#
+    return(ho)#
+  })#
+  return(observed_heterozygosity)#
+}
+observed_heterozygosity <- calc_ho(gmatrix)
+)
+calc_ho <- function(geno_matrix) {#
+  observed_heterozygosity <- apply(geno_matrix, 2, function(locus) {#
+    # Number of heterozygotes at the locus#
+    num_heterozygotes <- sum(locus == 1)#
+    # Proportion of heterozygotes (Ho)#
+    ho <- num_heterozygotes / length(locus)#
+    return(ho)#
+  })#
+  return(observed_heterozygosity)#
+}
+calc_he <- function(geno_matrix) {#
+  expected_heterozygosity <- apply(geno_matrix, 2, function(locus) {#
+    # Calculate allele frequencies#
+    p <- sum(locus == 0) / length(locus)  # Frequency of allele 0#
+    q <- sum(locus == 2) / length(locus)  # Frequency of allele 2#
+    # Expected heterozygosity: He = 2pq#
+    he <- 2 * p * q#
+    return(he)#
+  })#
+  return(expected_heterozygosity)#
+}
+observed_heterozygosity <- calc_ho(gmatrix)
+observed_heterozygosity <- calc_ho(gmatrix)
+expected_heterozygosity <- calc_he(gmatrix)
+print(observed_heterozygosity)
+cat("Observed Heterozygosity (Ho):\n")
+cat("Observed Heterozygosity (Ho):\n")
+print(observed_heterozygosity)
+cat("Expected Heterozygosity (He):\n")
+print(expected_heterozygosity)
+mean(observed_heterozygosity)
+mean(expected_heterozygosity)
+calc_he <- function(input_matrix=NA){#
+  he_vect <- vector(length=dim(input_matrix)[2])#
+  for (i in 1:dim(input_matrix)[2]){#
+    afreq <- mean(input_matrix[,i]) / 2		## calculate the locus allele frequency#
+    he_vect[i] <- 2 * afreq * (1-afreq)		## calculate expected heterozygosity from the allele frequency#
+  }#
+  ## print out mean value#
+  print(paste0("Mean He: ", mean(he_vect)))#
+}
+calc_he(gmatrix) #expected He
+expected_heterozygosity
+class(expected_heterozygosity)
+dim(expected_heterozygisity)
+dim(expected_heterozygosity)
+he_vect
+he_vect
+mean(he_vect)
+gmatrix
+dim(gmatrix)
+head(gmatrix[,c(1:5x)])
+head(gmatrix[,c(1:5)])
+calc_he <- function(input_matrix=NA){#
+  he_vect <- vector(length=dim(input_matrix)[2])#
+  for (i in 1:dim(input_matrix)[2]){#
+    afreq <- mean(input_matrix[,i]) / 2		## calculate the locus allele frequency#
+    he_vect[i] <- 2 * afreq * (1-afreq)		## calculate expected heterozygosity from the allele frequency#
+  }#
+  ## print out mean value#
+  print(paste0("Mean He: ", mean(he_vect)))#
+}
+he_vect
+he <- calc_he(gmatrix) #expected He
+he
+class(he)
+install.packages("dartR")
+library(dartR)
+genotype_matrix_rounded <- round(gmatrix)
+genotype_matrix_rounded
+as.genlight(gmatrix)
+class(gmatrix)
+as.genlight(gmatrix)
+as.genlight(gmatrix)
+gmatrix_round <- round(gmatrix)
+gmatrix.round
+gmatrix_round
+head(gmatrix_round[,c(1:6)])
+popID
+library(dplyr)
+popID <- popID %>%#
+  mutate(Pop = str_replace(ID, "^MV", "WV"))
+install.packages('dplyr')
+popID <- popID %>%
+mutate(Pop = str_replace(ID, "^MV", "WV"))
+??str_replace
+install.packages("stringr")
+library(stringr)
+library(dplyr)
+popID <- popID %>%#
+  mutate(Pop = str_replace(ID, "^MV", "WV"))
+popID
+popID <- read.csv("POMA_PopID.csv")
+popID
+popID <- popID %>%#
+  mutate(Pop = str_replace(ID, "^MV", "^WV"))
+popID
+popID <- read.csv("POMA_PopID.csv")
+popID <- popID %>%#
+  mutate(Pop = str_replace(Pop, "^MV", "^WV"))
+popID
+popID <- read.csv("POMA_PopID.csv")
+popID <- popID %>%#
+  mutate(Pop = str_replace(Pop, "^MV", "WV"))
+popID
+popID <- popID %>%#
+	mutate(ID = str_Replace(ID, "^PM_MV","PM_WV"))
+popID <- popID %>%#
+	mutate(ID = str_replace(ID, "^PM_MV","PM_WV"))
+popID
+gl.prep <- cbind(popID,gmatrix)
+as.genlight(gl.prep)
+class(gmatrix)
+gl.prep@gen
+gl <- as.genlight(gl.prep)
+warnings()
+class(gl)
+gl
+gl@other
+gl@gen
+gl@pop
+pop(gl) <- popID
+dim(popID)
+dim(gmatrix)
+pop(gl) <- popID
+colnames(popID)
+colnames[3] <- "pop"
+colnames(popID)[3] <- "pop"
+pop(gl) <- popID
+pop(gl)
+pop(gl) <- popID[3]
+gl@pop <- popID[3]
+pop <- popID[3]
+pop
+gl@pop <- as.factor(pop)
+gl@pop <- factor(pop)
+gl@pop <- character(pop)
+gl@pop <- pop
+pop <- popID[3,]
+pop
+pop <- popID[,3]
+pop
+class(pop)
+gl@pop <- pop
+as.factor(pop)
+gl@pop <- pop
+class(pop)
+as.factor(pop)
+gl@pop <- as.factor(pop)
+gl
+Hobs(gl)
+Hs(gl)
+basic.stats(gl)
+library(dartR)
+gl.report.heterozygosity(gl)
+install.packages("dartR")
+library(dartR)
+install.packages("SNPRelate")
+library(DartR)
+library(dartR)

@@ -5,6 +5,7 @@ library("stringr")
 # k4 best supported by DIC but k2 takes slots 2-4 for next best
 datk2 <- read.csv("gprob2.txt")
 ids <- read.csv("POMA_PopID.csv") #to bind so we know indivs
+head(datk2[,c(1:6)])
 
 k2.id <- cbind(ids,datk2)
 
