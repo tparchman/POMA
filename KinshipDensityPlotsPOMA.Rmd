@@ -121,8 +121,8 @@ mleKin <- df[-1,] %>%
 ### Colors
 
 ```{r}
-col7 <- c("#24C2CC","#309500","#7a2ba4",
-          "#F2E02F","#ffb040","#1E4E87","#F45812")
+col7 <- c("#56B4E9","#0072B2","#F0E442",
+          "#CC79A7","#009E73","#D55E00","#E69F00")
 
 col7_d3 <- darken(col7, amount = 0.3)
 ```
@@ -180,7 +180,7 @@ mlePlot <- ggplot(data = mleKin, aes(x = kinship, y = Pop, fill = Pop, color = P
   #          label = substitute(paste(bold('N (pairwise) = 555'))),
   #          size = 4) +
   scale_fill_manual(values = col7) +
-  scale_color_manual(values = col7_d3) +
+  #scale_color_manual(values = col7_d3) +
   scale_x_continuous(limit = c(-0.01, 0.265), 
                      breaks = c(0, 0.125, 0.25)) +
   coord_cartesian(ylim = c(0.75, 7.25)) +
@@ -241,7 +241,7 @@ momPlot <- ggplot(data = momKin, aes(x = kinship, y = Pop, fill = Pop, color = P
   #          label = substitute(paste(bold('N (pairwise) = 555'))),
   #          size = 4) +
   scale_fill_manual(values = col7) +
-  scale_color_manual(values = col7_d3) +
+  #scale_color_manual(values = col7_d3) +
   scale_x_continuous(limit = c(-0.01, 0.265), 
                      breaks = c(0, 0.125, 0.25)) +
   coord_cartesian(ylim = c(0.75, 7.25)) +
