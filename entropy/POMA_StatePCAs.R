@@ -2,17 +2,24 @@ library("dplyr")
 library("stringr")
 
 # reading in the geno probabilities for k=2
-# k4 best supported by DIC but k2 takes slots 2-4 for next best
+# k = 2 best supported (lowest overall DIC)
 datk2 <- read.csv("gprob2.txt")
 ids <- read.csv("POMA_PopID.csv") #to bind so we know indivs
-head(datk2[,c(1:6)])
-
 k2.id <- cbind(ids,datk2)
 
+#replaces MV with WV in the Pop column
+k2.id <- k2.id %>%
+  mutate(Pop = str_replace(Pop, "^MV", "WV"))
+
+#replaces the MV with WV in the individual IDs
+k2.id <- k2.id %>%
+  mutate(ID = str_replace(ID, "^PM_MV", "PM_WV"))
+
+# PCA for all pops sampled
 all_pca <- prcomp(k2.id[,c(5:33801)], center=TRUE, scale=FALSE)
 summary(all_pca)
 
-head(pca.ids[,c(1:6)])
+# making a new dataset with the PC scores so we can subset and plot each site in whatever order we want
 pca.ids <- cbind(ids,all_pca$x)
 summary(all_pca)
 
@@ -24,9 +31,7 @@ pca.ids <- pca.ids %>%
 pca.ids <- pca.ids %>%
   mutate(ID = str_replace(ID, "^PM_MV", "PM_WV"))
 
-unique(pca.ids$Pop)
-
-#subsetting the pops
+#subsetting the pops so we can plot sites separately
 hp <- pca.ids[pca.ids$Pop == "HP",]
 ja <- pca.ids[pca.ids$Pop == "JA",]
 lb <- pca.ids[pca.ids$Pop == "LB",]
@@ -35,9 +40,11 @@ mt <- pca.ids[pca.ids$Pop == "MT",]
 wv <- pca.ids[pca.ids$Pop == "WV",]
 pp <- pca.ids[pca.ids$Pop == "PP",]
 
+#setting up plotting window and the base of the graph
 par(mar=c(5,5,1,1))
 plot(all_pca$x[,1], all_pca$x[,2], type="n", xlab="PC 1", ylab="PC 2", cex.lab=1.5, las=1)
 
+#adding all points to above
 points(hp$PC1,hp$PC2,pch=20,col="#56B4E9",cex=1.5)
 points(ja$PC1,ja$PC2,pch=20,col="#0072B2",cex=1.5)
 points(lb$PC1,lb$PC2,pch=20,col="#F0E442",cex=1.5)
@@ -47,7 +54,8 @@ points(wv$PC1,wv$PC2,pch=20,col="#D55E00",cex=1.5)
 points(pp$PC1,pp$PC2,pch=20,col="#E69F00",cex=1.5) 
 
 
-####### K4 just to compare ########
+####### K4 just to compare results ########
+### we don't see a big difference ########
 # datk4 <- read.csv("gprob4.txt")
 # k4.id <- cbind(ids,datk4)
 # 
@@ -92,6 +100,7 @@ points(pp$PC1,pp$PC2,pch=20,col="#E69F00",cex=1.5)
 ### just WA PCA ###
 #### k=2 ######
 ###############
+#subsetting the original geonotype matrix because we will run a PCA for just these sites now
 ja.gen2 <- subset(k2.id, Pop=="JA")
 me.gen2 <- subset(k2.id, Pop=="ME")
 pp.gen2 <- subset(k2.id, Pop=="PP")
@@ -101,14 +110,15 @@ step <- rbind(ja.gen2,me.gen2)
 wa.genos2 <- rbind(step, pp.gen2)
 dim(wa.genos2) # should be 32 33801
 
-head(wa.genos2[,c(1:6)])
+# generates the PCA and looks at the results
 wa_pca2 <- prcomp(wa.genos2[,c(5:33801)], center=TRUE, scale=FALSE)
 summary(wa_pca2)
 
+# adding the individual IDs to the PC score dataset
 wa.pca.ids2 <- cbind(wa.genos2[,c(1,3)],wa_pca2$x)
 head(wa.pca.ids2[,c(1:6)])
 
-#subsetting from PC scores
+#subsetting so we can plot individual sites
 ja.wa2 <- wa.pca.ids2[wa.pca.ids2$Pop == "JA",]
 me.wa2 <- wa.pca.ids2[wa.pca.ids2$Pop == "ME",]
 pp.wa2 <- wa.pca.ids2[wa.pca.ids2$Pop == "PP",]
@@ -126,13 +136,7 @@ points(pp.wa2$PC1,pp.wa2$PC2,pch=20,col="#E69F00",cex=1.5) #WA
 ###   k=2 ####
 ###################
 
-k2.id <- k2.id %>%
-  mutate(Pop = str_replace(Pop, "^MV", "WV"))
-
-#replaces the MV with WV in the individual IDs
-k2.id <- k2.id %>%
-  mutate(ID = str_replace(ID, "^PM_MV", "PM_WV"))
-
+# subsetting the genotype matrix
 hp.gen2 <- subset(k2.id, Pop=="HP")
 wv.gen2 <- subset(k2.id, Pop=="WV")
 
@@ -192,12 +196,13 @@ points(mt.ca2$PC1,mt.ca2$PC2,pch=20,col="#009E73",cex=1.5)
 
 ############### 
 #### CA + OR for fun
+##### (and also to see if we can see the coastal segregate)
 ###############
 south.genos2 <- rbind(ca.genos2,or.genos2)
 dim(south.genos2)
 
 so_pca2 <- prcomp(south.genos2[,c(5:33801)], center=TRUE, scale=FALSE)
-summary(so_pca2) #PC1: 0.1621, PC2: 0.8233
+summary(so_pca2) #PC1: 0.1621, PC2: 0.08233
 
 so.pca.ids2 <- cbind(south.genos2[,c(1,3)],so_pca2$x)
 head(so.pca.ids2[,c(1:6)])
@@ -225,8 +230,10 @@ points(wv.so2$PC1,wv.so2$PC2,pch=20,col="#D55E00",cex=1.5) #or
 layout <- layout(matrix(1:4, ncol=2))
 
 #all at k=2
-par(mar=c(5,5,1,1), pty="s")
-plot(all_pca$x[,1], all_pca$x[,2], type="n", xlab="PC 1 (13.9%)", ylab="PC 2 (9.2%)", cex.lab=1.5, las=1)
+par(mar=c(4,1,1,1), pty="s")
+plot(all_pca$x[,1], all_pca$x[,2], type="n",xlab="",ylab="", las=1, ylim=c(-60,60), xlim=c(-60,60))
+title(xlab="PC 1 (13.9%)", ylab="PC 2 (9.2%)", cex.lab=1, line=2.5)
+# legend(-25,60,legend="ALL",cex=0.75,bty="n",xjust=1)
 points(hp$PC1,hp$PC2,pch=20,col="#56B4E9",cex=1.5)
 points(ja$PC1,ja$PC2,pch=20,col="#0072B2",cex=1.5) 
 points(lb$PC1,lb$PC2,pch=20,col="#F0E442",cex=1.5)
@@ -236,35 +243,35 @@ points(wv$PC1,wv$PC2,pch=20,col="#D55E00",cex=1.5)
 points(pp$PC1,pp$PC2,pch=20,col="#E69F00",cex=1.5) 
 
 #OR
-par(mar=c(5,5,1,1))
-plot(or_pca2$x[,1], or_pca2$x[,2], type="n", xlab="PC 1 (22.1%)", ylab="PC 2 (4.0%)", cex.lab=1.5, las=1, ylim=c(-60,60), xlim=c(-60,60))
+par(mar=c(4,1,1,1))
+plot(or_pca2$x[,1], or_pca2$x[,2], type="n",xlab="",ylab="", las=1, ylim=c(-60,60), xlim=c(-60,60))
+title(xlab="PC 1 (22.1%)", ylab="PC 2 (4.0%)", cex.lab=1, line=2.5)
+#legend(-25,60,legend="OR",cex=0.75,bty="n",xjust=1)
 points(hp.or2$PC1,hp.or2$PC2,pch=20,col="#56B4E9",cex=1.5)
 points(wv.or2$PC1,wv.or2$PC2,pch=20,col="#D55E00",cex=1.5)
 
 
 #WA
-par(mar=c(5,5,1,1))
-plot(wa_pca2$x[,1], wa_pca2$x[,2], type="n", xlab="PC 1 (23.5%)", ylab="PC 2 (4.8%)", cex.lab=1.5, las=1, ylim=c(-60,60), xlim=c(-60,60))
+par(mar=c(4,1,1,1))
+plot(wa_pca2$x[,1], wa_pca2$x[,2], type="n",xlab="",ylab="", las=1, ylim=c(-60,60), xlim=c(-60,60))
+title(xlab="PC 1 (23.5%)", ylab="PC 2 (4.8%)", cex.lab=1, line=2.5)
+#legend(-25,60,legend="WA",cex=0.75,bty="n",xjust=1)
 points(ja.wa2$PC1,ja.wa2$PC2,pch=20,col="#0072B2",cex=1.5) #WA
 points(me.wa2$PC1,me.wa2$PC2,pch=20,col="#CC79A7",cex=1.5) #WA
 points(pp.wa2$PC1,pp.wa2$PC2,pch=20,col="#E69F00",cex=1.5) #WA
 
 #CA
-par(mar=c(5,5,1,1))
-plot(ca_pca2$x[,1], ca_pca2$x[,2], type="n", xlab="PC 1 (11.3%)", ylab="PC 2 (4.9%)", cex.lab=1.5, las=1, ylim=c(-60,60), xlim=c(-60,60))
+par(mar=c(4,1,1,1))
+plot(ca_pca2$x[,1], ca_pca2$x[,2], type="n", xlab="",ylab="", las=1, ylim=c(-60,60), xlim=c(-60,60))
+title(xlab="PC 1 (11.3%)", ylab="PC 2 (4.9%)", cex.lab=1, line=2.5)
+#legend(-25,60,legend="CA",cex=0.75,bty="n",xjust=1)
 points(lb.ca2$PC1,lb.ca2$PC2,pch=20,col="#F0E442",cex=1.5)
 points(mt.ca2$PC1,mt.ca2$PC2,pch=20,col="#009E73",cex=1.5)
 
+
+### summaries of all above PCAs so we can 
 summary(all_pca)# PC1: 0.139  PC2: 0.0919
 summary(wa_pca2)# PC1: 0.2351 PC2: 0.04818
 summary(or_pca2)# PC1: 0.2206 PC2: 0.0400
 summary(ca_pca2)# PC1: 0.1129 PC2: 0.04932
 
-
-#####
-#### fuckin around
-#####
-dev.off()
-plot.new()
-
-str(wa_pca2)
