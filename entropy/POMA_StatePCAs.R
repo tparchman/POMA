@@ -217,61 +217,73 @@ plot.new()
 par(mar=c(5,5,1,1))
 plot(so_pca2$x[,1], so_pca2$x[,2], type="n", xlab="PC 1", ylab="PC 2", cex.lab=1.5, las=1)
 
-points(lb.so2$PC1,lb.so2$PC2,pch=20,col="#F0E442",cex=1.5) #ca
-points(mt.so2$PC1,mt.so2$PC2,pch=20,col="#009E73",cex=1.5) #ca
-points(hp.so2$PC1,hp.so2$PC2,pch=20,col="#56B4E9",cex=1.5) #or
-points(wv.so2$PC1,wv.so2$PC2,pch=20,col="#D55E00",cex=1.5) #or
+points(lb.so2$PC1,lb.so2$PC2,pch=20,bg="#F0E442",cex=1.5) #ca
+points(mt.so2$PC1,mt.so2$PC2,pch=20,bg="#009E73",cex=1.5) #ca
+points(hp.so2$PC1,hp.so2$PC2,pch=20,bg="#56B4E9",cex=1.5) #or
+points(wv.so2$PC1,wv.so2$PC2,pch=20,bg="#D55E00",cex=1.5) #or
 
 ####################################################
 ####################################################
 ###########putting em all together##################
 ####################################################
 ####################################################
-layout <- layout(matrix(1:4, ncol=2))
+layout <- layout(matrix(1:6, ncol=3))
+layout.show(layout)
+
+layout.5 <- layout(matrix(c(1, 2, 5,3, 4, 5),nrow = 2, byrow = TRUE))
 
 #all at k=2
-par(mar=c(4,1,1,1), pty="s")
-plot(all_pca$x[,1], all_pca$x[,2], type="n",xlab="",ylab="", las=1, ylim=c(-60,60), xlim=c(-60,60))
-title(xlab="PC 1 (13.9%)", ylab="PC 2 (9.2%)", cex.lab=1, line=2.5)
+par(oma=c(1,1,1,1),mar=c(3.5,0.7,0.7,0.7), pty="s")
+plot(all_pca$x[,1], all_pca$x[,2], type="n",xlab="",ylab="", las=0.9, ylim=c(-60,60), xlim=c(-60,60))
+title(xlab="PC 1 (13.9%)", ylab="PC 2 (9.2%)", cex.lab=0.9, font.lab=2, line=2.5)
 # legend(-25,60,legend="ALL",cex=0.75,bty="n",xjust=1)
-points(hp$PC1,hp$PC2,pch=20,col="#56B4E9",cex=1.5)
-points(ja$PC1,ja$PC2,pch=20,col="#0072B2",cex=1.5) 
-points(lb$PC1,lb$PC2,pch=20,col="#F0E442",cex=1.5)
-points(me$PC1,me$PC2,pch=20,col="#CC79A7",cex=1.5) 
-points(mt$PC1,mt$PC2,pch=20,col="#009E73",cex=1.5) 
-points(wv$PC1,wv$PC2,pch=20,col="#D55E00",cex=1.5)
-points(pp$PC1,pp$PC2,pch=20,col="#E69F00",cex=1.5) 
+points(hp$PC1,hp$PC2,pch=24,bg="#56B4E9",col="white",cex=1.75) # hp
+points(ja$PC1,ja$PC2,pch=21,bg="#0072B2",col="white",cex=1.75)  # ja
+points(lb$PC1,lb$PC2,pch=21,bg="#F0E442",col="white",cex=1.75) # lb
+points(me$PC1,me$PC2,pch=21,bg="#CC79A7",col="white",cex=1.75) # me
+points(mt$PC1,mt$PC2,pch=21,bg="#009E73",col="white",cex=1.75) # mt
+points(wv$PC1,wv$PC2,pch=24,bg="#D55E00",col="white",cex=1.75) # wv
+points(pp$PC1,pp$PC2,pch=21,bg="#E69F00",col="white",cex=1.75) # pp
 
 #OR
-par(mar=c(4,1,1,1))
+par(mar=c(3.5,0.7,0.7,0.7))
 plot(or_pca2$x[,1], or_pca2$x[,2], type="n",xlab="",ylab="", las=1, ylim=c(-60,60), xlim=c(-60,60))
-title(xlab="PC 1 (22.1%)", ylab="PC 2 (4.0%)", cex.lab=1, line=2.5)
+title(xlab="PC 1 (22.1%)", ylab="PC 2 (4.0%)", cex.lab=0.9, font.lab=2, line=2.5)
 #legend(-25,60,legend="OR",cex=0.75,bty="n",xjust=1)
-points(hp.or2$PC1,hp.or2$PC2,pch=20,col="#56B4E9",cex=1.5)
-points(wv.or2$PC1,wv.or2$PC2,pch=20,col="#D55E00",cex=1.5)
+points(hp.or2$PC1,hp.or2$PC2,pch=24,bg="#56B4E9",col="white",cex=1.75)
+points(wv.or2$PC1,wv.or2$PC2,pch=24,bg="#D55E00",col="white",cex=1.75)
 
 
 #WA
-par(mar=c(4,1,1,1))
+par(mar=c(3.5,0.7,0.7,0.7))
 plot(wa_pca2$x[,1], wa_pca2$x[,2], type="n",xlab="",ylab="", las=1, ylim=c(-60,60), xlim=c(-60,60))
-title(xlab="PC 1 (23.5%)", ylab="PC 2 (4.8%)", cex.lab=1, line=2.5)
+title(xlab="PC 1 (23.5%)", ylab="PC 2 (4.8%)", cex.lab=0.9, font.lab=2, line=2.5)
 #legend(-25,60,legend="WA",cex=0.75,bty="n",xjust=1)
-points(ja.wa2$PC1,ja.wa2$PC2,pch=20,col="#0072B2",cex=1.5) #WA
-points(me.wa2$PC1,me.wa2$PC2,pch=20,col="#CC79A7",cex=1.5) #WA
-points(pp.wa2$PC1,pp.wa2$PC2,pch=20,col="#E69F00",cex=1.5) #WA
+points(ja.wa2$PC1,ja.wa2$PC2,pch=21,bg="#0072B2",col="white",cex=1.75)
+points(me.wa2$PC1,me.wa2$PC2,pch=21,bg="#CC79A7",col="white",cex=1.75)
+points(pp.wa2$PC1,pp.wa2$PC2,pch=21,bg="#E69F00",col="white",cex=1.75)
 
 #CA
-par(mar=c(4,1,1,1))
+par(mar=c(3.5,0.7,0.7,0.7))
 plot(ca_pca2$x[,1], ca_pca2$x[,2], type="n", xlab="",ylab="", las=1, ylim=c(-60,60), xlim=c(-60,60))
-title(xlab="PC 1 (11.3%)", ylab="PC 2 (4.9%)", cex.lab=1, line=2.5)
+title(xlab="PC 1 (11.3%)", ylab="PC 2 (4.9%)", cex.lab=0.9, font.lab=2, line=2.5)
 #legend(-25,60,legend="CA",cex=0.75,bty="n",xjust=1)
-points(lb.ca2$PC1,lb.ca2$PC2,pch=20,col="#F0E442",cex=1.5)
-points(mt.ca2$PC1,mt.ca2$PC2,pch=20,col="#009E73",cex=1.5)
+points(lb.ca2$PC1,lb.ca2$PC2,pch=21,bg="#F0E442",col="white",cex=1.75)
+points(mt.ca2$PC1,mt.ca2$PC2,pch=21,bg="#009E73",col="white",cex=1.75)
 
+plot.new()
+par(mar=c(0,0,0,0))
+legend("center",
+       legend = c("JA","PP","ME","HP","WV","LB","MT"),
+       col = c("#0072B2","#CC79A7","#E69F00","#56B4E9","#D55E00","#F0E442","#009E73"),
+       bg=c("#0072B2","#CC79A7","#E69F00","#56B4E9","#D55E00","#F0E442","#009E73"),
+       pch = c(21,21,21,24,24,21,21),
+       cex=1.75,
+       bty = "n")
 
-### summaries of all above PCAs so we can 
-summary(all_pca)# PC1: 0.139  PC2: 0.0919
-summary(wa_pca2)# PC1: 0.2351 PC2: 0.04818
-summary(or_pca2)# PC1: 0.2206 PC2: 0.0400
-summary(ca_pca2)# PC1: 0.1129 PC2: 0.04932
+### summaries of all above PCAs so we can add % explained 
+# summary(all_pca)# PC1: 0.139  PC2: 0.0919
+# summary(wa_pca2)# PC1: 0.2351 PC2: 0.04818
+# summary(or_pca2)# PC1: 0.2206 PC2: 0.0400
+# summary(ca_pca2)# PC1: 0.1129 PC2: 0.04932
 
