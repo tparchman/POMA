@@ -21,7 +21,6 @@ summary(all_pca)
 
 # making a new dataset with the PC scores so we can subset and plot each site in whatever order we want
 pca.ids <- cbind(ids,all_pca$x)
-summary(all_pca)
 
 #replaces the MV with WV in the Pop IDs
 pca.ids <- pca.ids %>%
@@ -56,6 +55,7 @@ points(pp$PC1,pp$PC2,pch=20,col="#E69F00",cex=1.5)
 
 ####### K4 just to compare results ########
 ### we don't see a big difference ########
+#### but feel free to give it a try ######
 # datk4 <- read.csv("gprob4.txt")
 # k4.id <- cbind(ids,datk4)
 # 
@@ -196,7 +196,7 @@ points(mt.ca2$PC1,mt.ca2$PC2,pch=20,col="#009E73",cex=1.5)
 
 ############### 
 #### CA + OR for fun
-##### (and also to see if we can see the coastal segregate)
+##### (and also to see if we can see a coastal segregate cluster)
 ###############
 south.genos2 <- rbind(ca.genos2,or.genos2)
 dim(south.genos2)
@@ -217,10 +217,10 @@ plot.new()
 par(mar=c(5,5,1,1))
 plot(so_pca2$x[,1], so_pca2$x[,2], type="n", xlab="PC 1", ylab="PC 2", cex.lab=1.5, las=1)
 
-points(lb.so2$PC1,lb.so2$PC2,pch=20,bg="#F0E442",cex=1.5) #ca
-points(mt.so2$PC1,mt.so2$PC2,pch=20,bg="#009E73",cex=1.5) #ca
-points(hp.so2$PC1,hp.so2$PC2,pch=20,bg="#56B4E9",cex=1.5) #or
-points(wv.so2$PC1,wv.so2$PC2,pch=20,bg="#D55E00",cex=1.5) #or
+points(lb.so2$PC1,lb.so2$PC2,pch=20,col="#F0E442",cex=1.5) #ca
+points(mt.so2$PC1,mt.so2$PC2,pch=20,col="#009E73",cex=1.5) #ca
+points(hp.so2$PC1,hp.so2$PC2,pch=20,col="#56B4E9",cex=1.5) #or
+points(wv.so2$PC1,wv.so2$PC2,pch=20,col="#D55E00",cex=1.5) #or
 
 ####################################################
 ####################################################
@@ -276,7 +276,7 @@ par(mar=c(0,0,0,0))
 legend("center",
        legend = c("JA","PP","ME","HP","WV","LB","MT"),
        col = c("#0072B2","#CC79A7","#E69F00","#56B4E9","#D55E00","#F0E442","#009E73"),
-       bg=c("#0072B2","#CC79A7","#E69F00","#56B4E9","#D55E00","#F0E442","#009E73"),
+       pt.bg=c("#0072B2","#CC79A7","#E69F00","#56B4E9","#D55E00","#F0E442","#009E73"),
        pch = c(21,21,21,24,24,21,21),
        cex=1.75,
        bty = "n")
