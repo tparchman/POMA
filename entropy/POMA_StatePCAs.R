@@ -197,6 +197,7 @@ points(mt.ca2$PC1,mt.ca2$PC2,pch=20,col="#009E73",cex=1.5)
 ############### 
 #### CA + OR for fun
 ##### (and also to see if we can see a coastal segregate cluster)
+##### ( we cannot )
 ###############
 south.genos2 <- rbind(ca.genos2,or.genos2)
 dim(south.genos2)
@@ -293,16 +294,16 @@ legend("center",
 ###########################################################
 
 
-layout <- layout(matrix(1:6, ncol=3))
-layout.show(layout)
+# layout <- layout(matrix(1:6, ncol=3))
+# layout.show(layout.5)
 
 layout.5 <- layout(matrix(c(1, 2, 5,3, 4, 5),nrow = 2, byrow = TRUE))
+# par(oma=c(3,3,3,3))
 
 #all at k=2
-par(oma=c(1,1,1,1),mar=c(3.5,0.7,0.7,0.7), pty="s")
-plot(all_pca$x[,1], all_pca$x[,2], type="n",xlab="",ylab="", las=0.9, ylim=c(-35,50), xlim=c(-35,50))
-title(xlab="PC 1 (13.9%)", ylab="PC 2 (9.2%)", cex.lab=0.9, font.lab=2, line=2.5)
-# legend(-25,60,legend="ALL",cex=0.75,bty="n",xjust=1)
+par(mar=c(3,2,0.25,1), pty="s",mgp=c(2, 0.25, 0),tck=-0.02)
+plot(all_pca$x[,1], all_pca$x[,2], type="n",xlab="",ylab="", las=1, ylim=c(-35,50), xlim=c(-35,50))
+title(xlab="PC 1 (13.9%)", ylab="PC 2 (9.2%)", cex.lab=0.7, font.lab=2, line=1.5)
 points(hp$PC1,hp$PC2,pch=24,bg="#56B4E9",col="white",cex=1.75) # hp
 points(ja$PC1,ja$PC2,pch=21,bg="#0072B2",col="white",cex=1.75)  # ja
 points(lb$PC1,lb$PC2,pch=21,bg="#F0E442",col="white",cex=1.75) # lb
@@ -312,27 +313,28 @@ points(wv$PC1,wv$PC2,pch=24,bg="#D55E00",col="white",cex=1.75) # wv
 points(pp$PC1,pp$PC2,pch=21,bg="#E69F00",col="white",cex=1.75) # pp
 
 #OR
-par(mar=c(3.5,0.7,0.7,0.7))
+par(mar=c(3,2,0.25,0))
 plot(or_pca2$x[,1], or_pca2$x[,2], type="n",xlab="",ylab="", las=1, ylim=c(-40,45), xlim=c(-35,50))
-title(xlab="PC 1 (22.1%)", ylab="PC 2 (4.0%)", cex.lab=0.9, font.lab=2, line=2.5)
+title(xlab="PC 1 (22.1%)", ylab="PC 2 (4.0%)", cex.lab=0.7, font.lab=2, line=1.5)
+
 #legend(-25,60,legend="OR",cex=0.75,bty="n",xjust=1)
 points(hp.or2$PC1,hp.or2$PC2,pch=24,bg="#56B4E9",col="white",cex=1.75)
 points(wv.or2$PC1,wv.or2$PC2,pch=24,bg="#D55E00",col="white",cex=1.75)
 
 
 #WA
-par(mar=c(3.5,0.7,0.7,0.7))
+par(mar=c(3,2,0.25,1))
 plot(wa_pca2$x[,1], wa_pca2$x[,2], type="n",xlab="",ylab="", las=1, ylim=c(-35,40), xlim=c(-55,45))
-title(xlab="PC 1 (23.5%)", ylab="PC 2 (4.8%)", cex.lab=0.9, font.lab=2, line=2.5)
+title(xlab="PC 1 (23.5%)", ylab="PC 2 (4.8%)", cex.lab=0.7, font.lab=2, line=1.5)
 #legend(-25,60,legend="WA",cex=0.75,bty="n",xjust=1)
 points(ja.wa2$PC1,ja.wa2$PC2,pch=21,bg="#0072B2",col="white",cex=1.75)
 points(me.wa2$PC1,me.wa2$PC2,pch=21,bg="#CC79A7",col="white",cex=1.75)
 points(pp.wa2$PC1,pp.wa2$PC2,pch=21,bg="#E69F00",col="white",cex=1.75)
 
 #CA
-par(mar=c(3.5,0.7,0.7,0.7))
+par(mar=c(3,2,0.25,0))
 plot(ca_pca2$x[,1], ca_pca2$x[,2], type="n", xlab="",ylab="", las=1)
-title(xlab="PC 1 (11.3%)", ylab="PC 2 (4.9%)", cex.lab=0.9, font.lab=2, line=2.5)
+title(xlab="PC 1 (11.3%)", ylab="PC 2 (4.9%)", cex.lab=0.7, font.lab=2, line=1.5)
 #legend(-25,60,legend="CA",cex=0.75,bty="n",xjust=1)
 points(lb.ca2$PC1,lb.ca2$PC2,pch=21,bg="#F0E442",col="white",cex=1.75)
 points(mt.ca2$PC1,mt.ca2$PC2,pch=21,bg="#009E73",col="white",cex=1.75)
@@ -340,14 +342,11 @@ points(mt.ca2$PC1,mt.ca2$PC2,pch=21,bg="#009E73",col="white",cex=1.75)
 plot.new()
 par(mar=c(0,0,0,0))
 legend("center",
-       legend = c("JA","PP","ME","HP","WV","LB","MT","",substitute(paste(italic("P. m. mardon"))),substitute(paste(italic("P. m. klamathensis")))),
+       legend = c("JA (WA)","PP (WA)","ME (WA)","HP (OR)","WV (OR)","LB (CA)","MT (CA)","",substitute(paste(italic("P. m. mardon"))),substitute(paste(italic("P. m. klamathensis")))),
        col = c("#0072B2","#CC79A7","#E69F00","#56B4E9","#D55E00","#F0E442","#009E73","white","black","black"),
        pt.bg=c("#0072B2","#CC79A7","#E69F00","#56B4E9","#D55E00","#F0E442","#009E73","white","white","white"),
        pch = c(21,21,21,24,24,21,21,1,21,24),
-       cex=1,
+       cex=1.1,
        bty = "n")
-
-substitute(paste(italic("P. m. mardon")))
-
 
 

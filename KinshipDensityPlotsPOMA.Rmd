@@ -124,7 +124,7 @@ mleKin <- df[-1,] %>%
 col7 <- c("#56B4E9","#0072B2","#F0E442",
           "#CC79A7","#009E73","#D55E00","#E69F00")
 
-col7_d3 <- darken(col7, amount = 0.3)
+#col7_d3 <- darken(col7, amount = 0.3)
 ```
 
 ### Plotting
