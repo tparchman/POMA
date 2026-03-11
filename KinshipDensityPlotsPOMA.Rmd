@@ -91,6 +91,8 @@ snpgdsClose(genofile)
 Looping through .csv's and combining.
 
 ```{r}
+popOrder <- c('MT', 'LB', 'HP', 'WV', 'PP', 'ME', 'JA')
+
 # making combined dataframe for MoM estimations
 df <- matrix(ncol = 5)
 colnames(df) <- c('ID1', 'ID2', 'k0', 'k1', 'kinship')
@@ -102,7 +104,10 @@ for(pop in populations) {
 
 momKin <- df[-1,] %>%
   mutate(Project = str_split_i(ID1, '_', 2),
-         Pop = str_split_i(ID1, '_', 2))
+         Pop = str_split_i(ID1, '_', 2)) %>%
+  mutate(Pop = factor(case_when(Pop == 'MV' ~ 'WV',
+                                TRUE ~ Pop),
+                      levels = popOrder))
 
 # making combined dataframe for MLE estimations
 df <- matrix(ncol = 6)
@@ -115,14 +120,17 @@ for(pop in populations) {
 
 mleKin <- df[-1,] %>%
   mutate(Project = str_split_i(ID1, '_', 2),
-         Pop = str_split_i(ID1, '_', 2))
+         Pop = str_split_i(ID1, '_', 2)) %>%
+  mutate(Pop = factor(case_when(Pop == 'MV' ~ 'WV',
+                                TRUE ~ Pop),
+                      levels = popOrder))
 ```
 
 ### Colors
 
 ```{r}
-col7 <- c("#56B4E9","#0072B2","#F0E442",
-          "#CC79A7","#009E73","#D55E00","#E69F00")
+col7 <- c("#009E73","#F0E442","#56B4E9",
+          "#D55E00","#E69F00","#CC79A7","#0072B2")
 
 #col7_d3 <- darken(col7, amount = 0.3)
 ```
@@ -146,16 +154,16 @@ mlePlot <- ggplot(data = mleKin, aes(x = kinship, y = Pop, fill = Pop, color = P
               stroke = 0.25, alpha = 0.8) +
   annotate('text',
            x = 0.135,
-           y = 6.7,
+           y = 4,
            label = substitute(paste(italic('UNCLE / NIECE'))),
            angle = 270,
            size = 4) +
-  annotate('text',
-           x = 0.135,
-           y = 1.1,
-           label = substitute(paste(italic('HALF SIBS'))),
-           angle = 270,
-           size = 4) +
+  # annotate('text',
+  #          x = 0.135,
+  #          y = 1.1,
+  #          label = substitute(paste(italic('HALF SIBS'))),
+  #          angle = 270,
+  #          size = 4) +
   annotate('text',
            x = 0.26,
            y = 6.2,
@@ -180,7 +188,7 @@ mlePlot <- ggplot(data = mleKin, aes(x = kinship, y = Pop, fill = Pop, color = P
   #          label = substitute(paste(bold('N (pairwise) = 555'))),
   #          size = 4) +
   scale_fill_manual(values = col7) +
-  #scale_color_manual(values = col7_d3) +
+  scale_color_manual(values = col7_d3) +
   scale_x_continuous(limit = c(-0.01, 0.265), 
                      breaks = c(0, 0.125, 0.25)) +
   coord_cartesian(ylim = c(0.75, 7.25)) +
@@ -213,16 +221,16 @@ momPlot <- ggplot(data = momKin, aes(x = kinship, y = Pop, fill = Pop, color = P
               stroke = 0.25, alpha = 0.8) +
   annotate('text',
            x = 0.135,
-           y = 6.7,
+           y = 4,
            label = substitute(paste(italic('UNCLE / NIECE'))),
            angle = 270,
            size = 4) +
-  annotate('text',
-           x = 0.135,
-           y = 1.1,
-           label = substitute(paste(italic('HALF SIBS'))),
-           angle = 270,
-           size = 4) +
+  # annotate('text',
+  #          x = 0.135,
+  #          y = 1.1,
+  #          label = substitute(paste(italic('HALF SIBS'))),
+  #          angle = 270,
+  #          size = 4) +
   annotate('text',
            x = 0.26,
            y = 6.2,
@@ -241,7 +249,7 @@ momPlot <- ggplot(data = momKin, aes(x = kinship, y = Pop, fill = Pop, color = P
   #          label = substitute(paste(bold('N (pairwise) = 555'))),
   #          size = 4) +
   scale_fill_manual(values = col7) +
-  #scale_color_manual(values = col7_d3) +
+  scale_color_manual(values = col7_d3) +
   scale_x_continuous(limit = c(-0.01, 0.265), 
                      breaks = c(0, 0.125, 0.25)) +
   coord_cartesian(ylim = c(0.75, 7.25)) +
